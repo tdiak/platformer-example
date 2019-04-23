@@ -12,10 +12,16 @@ function love.load()
     anim8 = require('anim8/anim8')
     require('coin')
 
-    spawnPlatform(50, 400, 300, 30)
-    spawnCoin(200, 300)
     sti = require('simpleTiled/sti')
     gameMap = sti("maps/map.lua")
+
+    for i, obj in ipairs(gameMap.layers['Platforms'].objects) do
+        spawnPlatform(obj.x, obj.y, obj.width, obj.height)
+    end
+
+    for i, obj in ipairs(gameMap.layers['Coins'].objects) do
+        spawnCoin(obj.x, obj.y)
+    end
 end
 
 
@@ -27,6 +33,8 @@ function love.update(dt)
     for i, coin in ipairs(coins) do
         coin.animation:update(dt)
     end
+
+    coinUpdate(dt)
 end
 
 
@@ -34,12 +42,8 @@ function love.draw()
     gameMap:drawLayer(gameMap.layers['Tile Layer 1'])
     love.graphics.draw(player.sprite, player.body:getX(), player.body:getY(), nil, player.direction, 1, sprites.player_stand:getWidth()/2, sprites.player_stand:getHeight()/2)
 
-    for i, platform in ipairs(platforms) do
-        love.graphics.rectangle("fill", platform.body:getX(), platform.body:getY(), platform.width, platform.height)
-    end
-
     for i, coin in ipairs(coins) do
-        coin.animation:draw(sprites.coin_sheet, coin.x, coin.y)
+        coin.animation:draw(sprites.coin_sheet, coin.x, coin.y, nil, nil, nil, 20.5, 21)
     end
 end
 
@@ -70,4 +74,9 @@ function spawnPlatform(x, y, width, height)
     platform.height = height
     
     table.insert(platforms, platform)
+end
+
+
+function distanceBetween(x1, y1, x2, y2)
+    return math.sqrt((y2 - y1)^2 + (x2 - x1)^2)
 end
