@@ -14,12 +14,15 @@ function love.load()
 
     spawnPlatform(50, 400, 300, 30)
     spawnCoin(200, 300)
+    sti = require('simpleTiled/sti')
+    gameMap = sti("maps/map.lua")
 end
 
 
 function love.update(dt)
     world:update(dt)
     playerUpdate(dt)
+    gameMap:update(dt)
 
     for i, coin in ipairs(coins) do
         coin.animation:update(dt)
@@ -28,6 +31,7 @@ end
 
 
 function love.draw()
+    gameMap:drawLayer(gameMap.layers['Tile Layer 1'])
     love.graphics.draw(player.sprite, player.body:getX(), player.body:getY(), nil, player.direction, 1, sprites.player_stand:getWidth()/2, sprites.player_stand:getHeight()/2)
 
     for i, platform in ipairs(platforms) do
